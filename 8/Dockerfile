@@ -37,10 +37,14 @@ LABEL summary="$SUMMARY" \
       version="1" \
       maintainer="SoftwareCollections.org <sclorg@redhat.com>"
 
-RUN yum install -y centos-release-scl-rh && \
+ENV NGINX_CONFIGURATION_PATH=/opt/app-root/etc/nginx.d
+ENV NGINX_DEFAULT_CONF_PATH=/opt/app-root/etc/nginx.default.d
+
+RUN yum install -y yum-utils gettext hostname && \
+    yum install -y centos-release-scl-rh epel-release && \
     yum remove -y rh-nodejs6\* && \
     yum-config-manager --enable centos-sclo-rh-testing && \
-    INSTALL_PKGS="rh-nodejs8 rh-nodejs8-npm rh-nodejs8-nodejs-nodemon nss_wrapper" && \
+    INSTALL_PKGS="rh-nodejs8 rh-nodejs8-npm rh-nodejs8-nodejs-nodemon nss_wrapper bind-utils rh-nginx112 rh-nginx112-nginx" && \
     ln -s /usr/lib/node_modules/nodemon/bin/nodemon.js /usr/bin/nodemon && \
     yum install -y --setopt=tsflags=nodocs $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
@@ -52,11 +56,27 @@ COPY ./s2i/bin/ $STI_SCRIPTS_PATH
 # Copy extra files to the image.
 COPY ./root/ /
 
-# Drop the root user and make the content of /opt/app-root owned by user 1001
-RUN chown -R 1001:0 /opt/app-root && chmod -R ug+rwx /opt/app-root && \
+# In order to drop the root user, we have to make some directories world
+# writeable as OpenShift default security model is to run the container under
+# random UID.
+RUN sed -i -f /opt/app-root/nginxconf.sed /etc/opt/rh/rh-nginx112/nginx/nginx.conf && \
+    mkdir -p /opt/app-root/etc/nginx.d/ && \
+    mkdir -p /opt/app-root/etc/nginx.default.d/ && \
+    chmod -R a+rwx /opt/app-root/etc && \
+    chmod -R a+rwx /var/opt/rh/rh-nginx112 && \
+    chown -R 1001:0 /opt/app-root && \
+    chmod -R ug+rwx /opt/app-root && \
+    chown -R 1001:0 /var/opt/rh/rh-nginx112 && \
     rpm-file-permissions
 
 USER 1001
+
+VOLUME ["/opt/rh/rh-nginx112/root/usr/share/nginx/html"]
+VOLUME ["/var/opt/rh/rh-nginx112/log/nginx/"]
+
+ENV BASH_ENV=/opt/app-root/etc/scl_enable \
+    ENV=/opt/app-root/etc/scl_enable \
+    PROMPT_COMMAND=". /opt/app-root/etc/scl_enable"
 
 # Set the default CMD to print the usage of the language image
 CMD $STI_SCRIPTS_PATH/usage
