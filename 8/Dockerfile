@@ -56,10 +56,13 @@ COPY ./s2i/bin/ $STI_SCRIPTS_PATH
 # Copy extra files to the image.
 COPY ./root/ /
 
+COPY ./jitsi-meet.conf /opt/app-root/etc/nginx.default.d/
+
 # In order to drop the root user, we have to make some directories world
 # writeable as OpenShift default security model is to run the container under
 # random UID.
 RUN sed -i -f /opt/app-root/nginxconf.sed /etc/opt/rh/rh-nginx112/nginx/nginx.conf && \
+    sed -i ':a;N;$!ba;s%location / {\n%#location / {\n#%' /etc/opt/rh/rh-nginx112/nginx/nginx.conf && \
     mkdir -p /opt/app-root/etc/nginx.d/ && \
     mkdir -p /opt/app-root/etc/nginx.default.d/ && \
     chmod -R a+rwx /opt/app-root/etc && \
