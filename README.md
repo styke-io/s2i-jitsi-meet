@@ -1,26 +1,21 @@
-NodeJS Docker images
+Source-2-Image for jitsi-meet
 ====================
 
-This repository contains the source for building various versions of
-the Node.JS application as a reproducible Docker image using
-[source-to-image](https://github.com/openshift/source-to-image).
+This repository contains the source for building Node.JS, nginx and jitsi-meet as a reproducible Docker image using [source-to-image](https://github.com/openshift/source-to-image).
 Users can choose between RHEL and CentOS based builder images.
 The resulting image can be run using [Docker](http://docker.io).
 
 For more information about using these images with OpenShift, please see the
 official [OpenShift Documentation](https://docs.openshift.org/latest/using_images/s2i_images/nodejs.html).
 
-For more information about contributing, see
-[the Contribution Guidelines](https://github.com/sclorg/welcome/blob/master/contribution.md).
-For more information about concepts used in these docker images, see the
-[Landing page](https://github.com/sclorg/welcome).
-
 
 Versions
 ---------------
-Node.JS versions currently provided are:
-* [NodeJS 4](4)
-* [NodeJS 6](6)
+Node.JS version currently provided is **NodeJS 8**
+
+nginx version currently provided is **nginx 1.12**
+
+jitsi-meet version currently provided is 
 
 RHEL versions currently supported are:
 * RHEL7
@@ -31,53 +26,48 @@ CentOS versions currently supported are:
 
 Installation
 ---------------
-To build a Node.JS image, choose either the CentOS or RHEL based image:
+To build a jitsi-meet image, choose either the CentOS or RHEL based image:
 *  **RHEL based image**
 
     This image is available in Red Hat Container Registry. To download it run:
 
     ```
-    $ docker pull registry.access.redhat.com/rhscl/nodejs-6-rhel7
+    $ docker pull styke/jitsi-meet-rhel7
     ```
 
     To build a RHEL based Node.JS image, you need to run the build on a properly
     subscribed RHEL machine.
 
-    ```
-    $ git clone --recursive https://github.com/sclorg/s2i-nodejs-container.git
-    $ cd s2i-nodejs-container
+    ```bash
+    $ git clone --recursive https://github.com/styke-io/s2i-jitsi-meet.git
+    $ cd s2i-jitsi-meet
     $ git submodule update --init
-    $ make build TARGET=rhel7 VERSIONS=6
+    $ make build TARGET=rhel7
     ```
 
 *  **CentOS based image**
 
     This image is available on DockerHub. To download it run:
 
-    ```
-    $ docker pull centos/nodejs-6-centos7
+    ```bash
+    $ docker pull styke/jitsi-meet-centos7
     ```
 
-    To build a Node.JS image from scratch run:
+    To build a image from scratch run:
 
-    ```
-    $ git clone --recursive https://github.com/sclorg/s2i-nodejs-container.git
-    $ cd s2i-nodejs-container
+    ```bash
+    $ git clone --recursive https://github.com/styke-io/s2i-jitsi-meet.git
+    $ cd s2i-jitsi-meet
     $ git submodule update --init
-    $ make build TARGET=centos7 VERSIONS=6
+    $ make build TARGET=centos7
     ```
-
-**Notice: By omitting the `VERSIONS` parameter, the build/test action will be performed
-on all provided versions of Node.JS.**
 
 
 Usage
 ---------------------------------
 
-For information about usage of Dockerfile for NodeJS 4,
-see [usage documentation](4/README.md).
-For information about usage of Dockerfile for NodeJS 6,
-see [usage documentation](6/README.md).
+For information about usage of Dockerfile for NodeJS 8,
+see [usage documentation](8/README.md).
 
 Test
 ---------------------
@@ -92,26 +82,23 @@ Users can choose between testing a Node.JS test application based on a RHEL or C
     subscribed RHEL machine.
 
     ```
-    $ cd s2i-nodejs-container
+    $ cd s2i-jitsi-meet
     $ git submodule update --init
-    $ make test TARGET=rhel7 VERSIONS=6
+    $ make test TARGET=rhel7
     ```
 
 *  **CentOS based image**
 
     ```
-    $ cd s2i-nodejs-container
+    $ cd s2i-jitsi-meet
     $ git submodule update --init
-    $ make test TARGET=centos7 VERSIONS=6
+    $ make test TARGET=centos7
     ```
-
-**Notice: By omitting the `VERSIONS` parameter, the build/test action will be performed
-on all provided versions of Node.JS.**
 
 
 Repository organization
 ------------------------
-* **`<nodejs-version>`**
+* **`8`**
 
     * **Dockerfile**
 
@@ -157,4 +144,3 @@ Repository organization
         * **run**
 
             This script runs the [S2I](https://github.com/openshift/source-to-image) test framework.
-
