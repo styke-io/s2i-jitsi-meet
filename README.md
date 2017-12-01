@@ -11,7 +11,7 @@ official [OpenShift Documentation](https://docs.openshift.org/latest/using_image
 
 Versions
 ---------------
-Node.JS version currently provided is **NodeJS 8**
+Node.JS version currently provided is **NodeJS 6**
 
 nginx version currently provided is **nginx 1.12**
 
@@ -66,8 +66,8 @@ To build a jitsi-meet image, choose either the CentOS or RHEL based image:
 Usage
 ---------------------------------
 
-For information about usage of Dockerfile for NodeJS 8,
-see [usage documentation](8/README.md).
+For information about usage of Dockerfile for NodeJS 6,
+see [usage documentation](6/README.md).
 
 Test
 ---------------------
@@ -98,7 +98,7 @@ Users can choose between testing a Node.JS test application based on a RHEL or C
 
 Repository organization
 ------------------------
-* **`8`**
+* **`6`**
 
     * **Dockerfile**
 
