@@ -39,18 +39,17 @@ LABEL summary="$SUMMARY" \
       io.openshift.s2i.scripts-url="image:///usr/libexec/s2i" \
       io.s2i.scripts-url="image:///usr/libexec/s2i" \
       com.redhat.dev-mode="DEV_MODE:false" \
-      com.redhat.deployments-dir="/opt/app-root/src" \
+      com.redhat.deployments-dir="${APP_ROOT}/src" \
       com.redhat.dev-mode.port="DEBUG_PORT:5858"\
       com.redhat.component="rh-$NAME$NODEJS_VERSION-docker" \
       name="centos/$NAME-$NODEJS_VERSION-centos7" \
       version="$NODEJS_VERSION" \
-      release="1" \
       maintainer="SoftwareCollections.org <sclorg@redhat.com>" \
       help="For more information visit https://github.com/sclorg/s2i-nodejs-container" \
       usage="s2i build <SOURCE-REPOSITORY> centos/$NAME-$NODEJS_VERSION-centos7:latest <APP-NAME>"
 
-ENV NGINX_CONFIGURATION_PATH=/opt/app-root/etc/nginx.d
-ENV NGINX_DEFAULT_CONF_PATH=/opt/app-root/etc/nginx.default.d
+ENV NGINX_CONFIGURATION_PATH=${APP_ROOT}/etc/nginx.d
+ENV NGINX_DEFAULT_CONF_PATH=${APP_ROOT}/etc/nginx.default.d
 
 RUN yum install -y yum-utils gettext hostname && \
     yum install -y centos-release-scl-rh epel-release && \
@@ -67,29 +66,30 @@ COPY ./s2i/bin/ $STI_SCRIPTS_PATH
 # Copy extra files to the image, including help file
 COPY ./root/ /
 
-COPY ./jitsi-meet.conf /opt/app-root/etc/nginx.default.d/
+COPY ./jitsi-meet.conf ${APP_ROOT}/etc/nginx.default.d/
 
 # In order to drop the root user, we have to make some directories world
 # writeable as OpenShift default security model is to run the container under
 # random UID.
-RUN sed -i -f /opt/app-root/nginxconf.sed /etc/opt/rh/rh-nginx112/nginx/nginx.conf && \
+RUN sed -i -f ${APP_ROOT}/nginxconf.sed /etc/opt/rh/rh-nginx112/nginx/nginx.conf && \
     sed -i ':a;N;$!ba;s%location / {\n%#location / {\n#%' /etc/opt/rh/rh-nginx112/nginx/nginx.conf && \
-    mkdir -p /opt/app-root/etc/nginx.d/ && \
-    mkdir -p /opt/app-root/etc/nginx.default.d/ && \
-    chmod -R a+rwx /opt/app-root/etc && \
+    mkdir -p ${APP_ROOT}/etc/nginx.d/ && \
+    mkdir -p ${APP_ROOT}/etc/nginx.default.d/ && \
+    chmod -R a+rwx ${APP_ROOT}/etc && \
     chmod -R a+rwx /var/opt/rh/rh-nginx112 && \
-    chown -R 1001:0 /opt/app-root && \
-    chmod -R ug+rwx /opt/app-root && \
+    chown -R 1001:0 ${APP_ROOT} && \
+    chmod -R ug+rwx ${APP_ROOT} && \
     chown -R 1001:0 /var/opt/rh/rh-nginx112 && \
     rpm-file-permissions
+
 USER 1001
 
 VOLUME ["/opt/rh/rh-nginx112/root/usr/share/nginx/html"]
 VOLUME ["/var/opt/rh/rh-nginx112/log/nginx/"]
 
-ENV BASH_ENV=/opt/app-root/etc/scl_enable \
-    ENV=/opt/app-root/etc/scl_enable \
-    PROMPT_COMMAND=". /opt/app-root/etc/scl_enable"
+ENV BASH_ENV=${APP_ROOT}/etc/scl_enable \
+    ENV=${APP_ROOT}/etc/scl_enable \
+    PROMPT_COMMAND=". ${APP_ROOT}/etc/scl_enable"
 
 # Set the default CMD to print the usage of the language image
 CMD $STI_SCRIPTS_PATH/usage
