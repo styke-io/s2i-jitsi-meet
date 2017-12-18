@@ -29,8 +29,7 @@ Installation
 To build a jitsi-meet image, choose either the CentOS or RHEL based image:
 *  **RHEL based image**
 
-    These images are available in the [Red Hat Container Catalog](https://access.redhat.com/containers/#/registry.access.redhat.com/rhscl/nodejs-8-rhel7).
-    To download it run:
+    These images are not available yet.
 
     ```
     $ docker pull styke/jitsi-meet-rhel7
