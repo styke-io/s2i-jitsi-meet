@@ -50,7 +50,7 @@ To build a jitsi-meet image, choose either the CentOS or RHEL based image:
     This image is available on DockerHub. To download it run:
 
     ```bash
-    $ docker pull styke/jitsi-meet-centos7
+    $ docker pull styke/s2i-jitsi-meet-centos7
     ```
 
     To build a image from scratch run:
