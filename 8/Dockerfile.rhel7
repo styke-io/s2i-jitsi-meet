@@ -40,7 +40,6 @@ LABEL summary="$SUMMARY" \
       io.s2i.scripts-url="image:///usr/libexec/s2i" \
       com.redhat.dev-mode="DEV_MODE:false" \
       com.redhat.deployments-dir="${APP_ROOT}/src" \
-      com.redhat.dev-mode.port="DEBUG_PORT:5858" \
       com.redhat.component="rh-${NAME}${NODEJS_VERSION}-container" \
       name="rhscl/$NAME-$NODEJS_VERSION-rhel7" \
       version="1" \
@@ -51,8 +50,7 @@ LABEL summary="$SUMMARY" \
 RUN yum install -y yum-utils && \
     prepare-yum-repositories rhel-server-rhscl-7-rpms && \
     ( [ "rh-${NAME}${NODEJS_VERSION}" != "${NODEJS_SCL}" ] && yum remove -y ${NODEJS_SCL}\* || : ) && \
-    INSTALL_PKGS="rh-nodejs8 rh-nodejs8-npm rh-nodejs8-nodejs-nodemon nss_wrapper" && \
-    ln -s /usr/lib/node_modules/nodemon/bin/nodemon.js /usr/bin/nodemon && \
+    INSTALL_PKGS="rh-nodejs8 rh-nodejs8-npm nss_wrapper rh-nginx112 rh-nginx112-nginx" && \
     yum install -y --setopt=tsflags=nodocs $INSTALL_PKGS && \
     rpm -V $INSTALL_PKGS && \
     yum clean all -y

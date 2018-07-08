@@ -74,6 +74,7 @@ if [ "$NODE_ENV" != "production" ]; then
 
 	echo "---> Building your Node application from source"
 	npm install
+	make
 
 else
 
@@ -82,7 +83,7 @@ else
 
 	#do not fail when there is no build script
 	echo "---> Building in production mode"
-	npm run build --if-present
+	make
 
 	echo "---> Pruning the development dependencies"
 	npm prune
@@ -100,6 +101,38 @@ else
 		rm -rf $NPM_TMP/npm-*
 	fi
 
+fi
+
+if [ -f ./nginx.conf ]; then
+  echo "---> Copying nginx.conf configuration file..."
+  cp -v ./nginx.conf "${NGINX_CONF_PATH}"
+  rm -f ./nginx.conf
+fi
+
+if [ -d ./nginx-cfg ]; then
+  echo "---> Copying nginx configuration files..."
+  if [ "$(ls -A ./nginx-cfg/*.conf)" ]; then
+    cp -v ./nginx-cfg/*.conf "${NGINX_CONFIGURATION_PATH}"
+    rm -rf ./nginx-cfg
+  fi
+  chmod -Rf g+rw ${NGINX_CONFIGURATION_PATH}
+fi
+
+if [ -d ./nginx-default-cfg ]; then
+  echo "---> Copying nginx default server configuration files..."
+  if [ "$(ls -A ./nginx-default-cfg/*.conf)" ]; then
+    cp -v ./nginx-default-cfg/*.conf "${NGINX_DEFAULT_CONF_PATH}"
+    rm -rf ./nginx-default-cfg
+  fi
+  chmod -Rf g+rw ${NGINX_DEFAULT_CONF_PATH}
+fi
+
+if [ -d ./nginx-start ]; then
+  echo "---> Copying nginx start-hook scripts..."
+  if [ "$(ls -A ./nginx-start/* 2>/dev/null)" ]; then
+    cp -v ./nginx-start/* "${NGINX_CONTAINER_SCRIPTS_PATH}/nginx-start/"
+    rm -rf ./nginx-start
+  fi
 fi
 
 # Fix source directory permissions

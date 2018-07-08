@@ -83,8 +83,6 @@ Development mode supports two features:
 * Hot Deploy
 * Debugging
 
-The debug port can be specified with the environment variable `DEBUG_PORT`. `DEBUG_PORT` is only valid if `DEV_MODE=true`.
-
 A simple example command for running the container in development mode is:
 ```
 docker run --env DEV_MODE=true my-image-id
@@ -92,15 +90,13 @@ docker run --env DEV_MODE=true my-image-id
 
 To run the container in development mode with a debug port of 5454, run:
 ```
-$ docker run --env DEV_MODE=true DEBUG_PORT=5454 my-image-id
+$ docker run --env DEV_MODE=true my-image-id
 ```
 
 To run the container in production mode, run:
 ```
 $ docker run --env DEV_MODE=false my-image-id
 ```
-
-By default, `DEV_MODE` is set to `false`, and `DEBUG_PORT` is set to `5858`, however the `DEBUG_PORT` is only relevant if `DEV_MODE=true`.
 
 Hot deploy
 --------------------
